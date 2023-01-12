@@ -74,7 +74,7 @@
 
 #define EXAMPLE_NUM_TABLE_ENTRIES (4)
 
-#define DISPLAY_ERROR(ErrorCode)  printf("Error Code is value %s", XilVitisNetP4ReturnTypeToString(ErrorCode))
+#define DISPLAY_ERROR(ErrorCode)  printf("Error Code is value %s\n", XilVitisNetP4ReturnTypeToString(ErrorCode))
 
 #define CONVERT_BITS_TO_BYTES(NumBits) ((NumBits/XIL_VITIS_NET_P4_BITS_PER_BYTE) + ((NumBits % XIL_VITIS_NET_P4_BITS_PER_BYTE)? 1 : 0))
 
@@ -133,19 +133,19 @@ uint8_t ForwardKeyArray[EXAMPLE_NUM_TABLE_ENTRIES][4] = {
     {0xcc, 0x3d, 0x03, 0xd7}
 };
 
-uint8_t ForwardMasksArray[EXAMPLE_NUM_TABLE_ENTRIES][1] = {
+uint8_t ForwardMasksArray[EXAMPLE_NUM_TABLE_ENTRIES][4] = {
     // Entry 1 : ForwardPkt
     // key :[ ipv4.dst=9aaa2010 ] 
-    {0xff},
+    {0xff, 0xff, 0xff, 0xff},
     //Entry 2 : ForwardPkt
     // key :[ ipv4.dst=cc930a03 ] 
-    {0xff},
+    {0xff, 0xff, 0xff, 0xff},
     // Entry 3 : ForwardPkt
     // key :[ ipv4.dst=6353a5ca ] 
-    {0xff},
+    {0xff, 0xff, 0xff, 0xff},
     // Entry 4 : ForwardPkt
     // key :[ ipv4.dst=cc3d03d7 ]
-    {0xff},
+    {0xff, 0xff, 0xff, 0xff}
 };
 
 /*
@@ -186,6 +186,8 @@ int main(void)
     uint32_t ActionId;
     uint8_t ReadParamActionsBuffer[2];
     uint32_t ReadActionId;
+    uint32_t ReadPriority;
+    uint8_t Masks;
 
     ExampleUserContext *UserCtxPtr;
     XilVitisNetP4TableCtx *ForwardTableCtxPtr;
@@ -265,7 +267,7 @@ int main(void)
     }
     printf("Table mode: %d\n\r", mode);
 
-
+    printf("\nInsert Tables.....");
     for (Index = 0; Index < EXAMPLE_NUM_TABLE_ENTRIES; Index++)
     // Insert Table 
     {
@@ -273,8 +275,8 @@ int main(void)
 
         Result = XilVitisNetP4TableInsert(ForwardTableCtxPtr,
                                      ForwardKeyArray[Index],
-                                     ForwardMasksArray[Index], // MaskPtr not used for a table with mode of BCAM
-                                     0x0, // Priority is ignored for a table with mode of BCAM
+                                     ForwardMasksArray[Index], 
+                                     0x0, 
                                      ActionId,
                                      ForwardActionParamsArray[Index]);
         if (Result != XIL_VITIS_NET_P4_SUCCESS)
@@ -283,104 +285,80 @@ int main(void)
             goto target_exit;
         }
         //sleep(1);
-//
-//
-//        Result = XilVitisNetP4TableGetByKey(ForwardTableCtxPtr,
-//                                       ForwardKeyArray[Index],
-//                                       NULL, // MaskPtr not used for a table with mode of BCAM
-//                                       0x0, // Priority is ignored for a table with mode of BCAM
-//                                       &ReadActionId,
-//                                       ReadParamActionsBuffer);
-//
-//        if (Result == XIL_VITIS_NET_P4_SUCCESS)
-//        {
-//            printf("For table entry %d the Action Parameters are 0x%02X, 0x%02X and Action Id is %d\n\r",
-//                   Index,
-//                   ReadParamActionsBuffer[0],
-//                   ReadParamActionsBuffer[1],
-//                   ReadActionId);
-//        }
-//        else
-//        {
-//            DISPLAY_ERROR(Result);
-//            goto target_exit;
-//        }
-//        //sleep(1);
-//
-//        printf("Updating the Response for table entry %d\n\r", Index);
-//        ReadParamActionsBuffer[0]++;
-//        ReadParamActionsBuffer[1]++;
-//        Result = XilVitisNetP4TableUpdate(ForwardTableCtxPtr,
-//                                     ForwardKeyArray[Index],
-//                                     NULL, // MaskPtr not used for a table with mode of BCAM
-//                                     ActionId,
-//                                     ReadParamActionsBuffer);
-//
-//        if (Result != XIL_VITIS_NET_P4_SUCCESS)
-//        {
-//            DISPLAY_ERROR(Result);
-//            goto target_exit;
-//        }
-//        //sleep(1);
-//
-//
-//        Result = XilVitisNetP4TableGetByKey(ForwardTableCtxPtr,
-//                                       ForwardKeyArray[Index],
-//                                       NULL, // MaskPtr not used for a table with mode of BCAM
-//                                       0x0, // Priority is ignored for a table with mode of BCAM
-//                                       &ReadActionId,
-//                                       ReadParamActionsBuffer);
-//        if (Result == XIL_VITIS_NET_P4_SUCCESS)
-//        {
-//            printf("For table entry %d the Action Parameters are 0x%02X, 0x%02X and Action Id is %d\n\r",
-//                   Index,
-//                   ReadParamActionsBuffer[0],
-//                   ReadParamActionsBuffer[1],
-//                   ReadActionId);
-//        }
-//        else
-//        {
-//            DISPLAY_ERROR(Result);
-//            goto target_exit;
-//        }
-//        //sleep(1);
-//
     }
 //
-//    /*
-//     * Example for deleting the entries below:
-//     */
-//
-///*
-//    for (Index = 0; Index < EXAMPLE_NUM_TABLE_ENTRIES; Index++)
-//    {
-//        printf("Delete table entry %d\n\r", Index);
-//        Result = XilVitisNetP4TableDelete(ForwardTableCtxPtr, ForwardKeyArray[Index], NULL);
-//
-//        if (Result == XIL_VITIS_NET_P4_SUCCESS)
-//        {
-//            // Not neccessary but checking if the key can be found to demo the usage //
-//            Result = XilVitisNetP4TableGetByKey(ForwardTableCtxPtr,
-//                                           ForwardKeyArray[Index],
-//                                           NULL, // MaskPtr not used for a table with mode of BCAM
-//                                           0x0, // Priority is ignored for a table with mode of BCAM
-//                                           &ReadActionId,
-//                                           ReadParamActionsBuffer);
-//            if (Result != XIL_VITIS_NET_P4_CAM_ERR_KEY_NOT_FOUND)
-//            {
-//                printf("Error table entry %d is present\n\r", Index);
-//            }
-//            else
-//            {
-//                printf("Table entry %d successfully deleted\n\r", Index);
-//            }
-//        }
-//        else
-//        {
-//            DISPLAY_ERROR(Result);
-//            goto target_exit;
-//        }
-//    }
+    printf("\nTable Querying... \n\r");
+    for (Index = 0; Index < EXAMPLE_NUM_TABLE_ENTRIES; Index++)
+    {   
+        Result = XilVitisNetP4TableGetByKey(ForwardTableCtxPtr,
+                                       ForwardKeyArray[Index],
+                                       ForwardMasksArray[Index], 
+                                       &ReadPriority, 
+                                       &ReadActionId,
+                                       ReadParamActionsBuffer);
+
+        if (Result == XIL_VITIS_NET_P4_SUCCESS)
+        {
+            printf("For table entry %d the Action Parameters are 0x%02X and Action Id is %d\n\r",
+                   Index,
+                   ReadParamActionsBuffer[0],
+                   ReadActionId);
+        }
+        else
+        {
+            DISPLAY_ERROR(Result);
+            goto target_exit;
+        }
+    }
+        //sleep(1);
+    
+    printf("\n Updating Tables...\n\r");
+    for (Index = 0; Index < EXAMPLE_NUM_TABLE_ENTRIES; Index++){
+        printf("Updating the Response for table entry %d\n\r", Index);
+        Result = XilVitisNetP4TableUpdate(ForwardTableCtxPtr,
+                                     ForwardKeyArray[Index],
+                                     ForwardMasksArray[Index], 
+                                     ActionId,
+                                     ReadParamActionsBuffer);
+
+        if (Result != XIL_VITIS_NET_P4_SUCCESS)
+        {
+            DISPLAY_ERROR(Result);
+            goto target_exit;
+        }
+    }
+
+    printf("\n Deleting Tables....\n\r");
+    for (Index = 0; Index < EXAMPLE_NUM_TABLE_ENTRIES-2; Index++)
+    {
+        printf("Delete table entry %d\n\r", Index);
+        printf("The masks is %2x", ForwardMasksArray[Index][1]);
+        Result = XilVitisNetP4TableDelete(ForwardTableCtxPtr, ForwardKeyArray[Index], ForwardMasksArray[Index]);
+
+        if (Result == XIL_VITIS_NET_P4_SUCCESS)
+        {
+            // Not neccessary but checking if the key can be found to demo the usage //
+            Result = XilVitisNetP4TableGetByKey(ForwardTableCtxPtr,
+                                           ForwardKeyArray[Index],
+                                           ForwardMasksArray[Index],
+                                           &ReadPriority, 
+                                           &ReadActionId,
+                                           ReadParamActionsBuffer);
+            if (Result != XIL_VITIS_NET_P4_CAM_ERR_KEY_NOT_FOUND)
+            {
+                printf("Error table entry %d is present\n\r", Index);
+            }
+            else
+            {
+                printf("\nTable entry %d successfully deleted\n\r", Index);
+            }
+        }
+        else
+        {
+            DISPLAY_ERROR(Result);
+            goto target_exit;
+        }
+    }
 //  */
 
 target_exit:

@@ -11,6 +11,6 @@ cd ..
 cp ../src/open-nic-shell-p4-plugin.patch .
 git apply open-nic-shell-p4-plugin.patch
 cp ../src/p4/forward.p4 src/.
-cp ../src/hw/p2p_five_tuple_p4_250mhz.sv plugin/p2p/.
+cp ../src/hw/p2p_forward_p4_250mhz.sv plugin/p2p/.
 cp ../script/update.tcl .
 vivado -mode batch -source update.tcl

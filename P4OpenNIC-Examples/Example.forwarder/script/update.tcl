@@ -10,7 +10,7 @@ set_property -dict [list CONFIG.USER_META_DATA_WIDTH {48} CONFIG.P4_FILE "$src_d
 generate_target all [get_files $build_dir/open_nic_shell.srcs/sources_1/ip/vitis_net_p4_0/vitis_net_p4_0.xci]
 
 update_compile_order -fileset sources_1
-add_files -norecurse $plugin_dir/p2p/p2p_five_tuple_p4_250mhz.sv
+add_files -norecurse $plugin_dir/p2p/p2p_forward_p4_250mhz.sv
 update_compile_order -fileset sources_1
 set_property -dict [list CONFIG.M01_A00_BASE_ADDR {0x0000000000004000} CONFIG.M00_A00_ADDR_WIDTH {14}] [get_ips box_250mhz_axi_crossbar]
 set_property strategy Performance_Explore [get_runs impl_1]
