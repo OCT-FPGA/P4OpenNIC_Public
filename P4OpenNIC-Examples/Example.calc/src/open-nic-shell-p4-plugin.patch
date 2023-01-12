@@ -1,0 +1,69 @@
+diff --git a/plugin/p2p/box_250mhz/box_250mhz_address_map.v b/plugin/p2p/box_250mhz/box_250mhz_address_map.v
+index 5804110..4760891 100644
+--- a/plugin/p2p/box_250mhz/box_250mhz_address_map.v
++++ b/plugin/p2p/box_250mhz/box_250mhz_address_map.v
+@@ -22,9 +22,9 @@
+ // --------------------------------------------------
+ //   BaseAddr |  HighAddr |  Module
+ // --------------------------------------------------
+-//   0x0000   |  0x0FFF   |  Port-to-port
++//   0x1000   |  0x1FFF   |  Port-to-port
+ // --------------------------------------------------
+-//   0x1000   |  0x1FFF   |  Dummy
++//   0x2000   |  0x2FFF   |  Dummy
+ // --------------------------------------------------
+ `timescale 1ns/1ps
+ module box_250mhz_address_map (
+@@ -89,7 +89,7 @@ module box_250mhz_address_map (
+   localparam C_DUMMY_INDEX = 1;
+ 
+   localparam C_P2P_BASE_ADDR   = 32'h0;
+-  localparam C_DUMMY_BASE_ADDR = 32'h1000;
++  localparam C_DUMMY_BASE_ADDR = 32'h2000;
+ 
+   wire                  [31:0] axil_p2p_awaddr;
+   wire                  [31:0] axil_p2p_araddr;
+diff --git a/plugin/p2p/box_250mhz/user_plugin_250mhz_inst.vh b/plugin/p2p/box_250mhz/user_plugin_250mhz_inst.vh
+index 788716e..0dcb4d7 100644
+--- a/plugin/p2p/box_250mhz/user_plugin_250mhz_inst.vh
++++ b/plugin/p2p/box_250mhz/user_plugin_250mhz_inst.vh
+@@ -31,7 +31,7 @@ localparam C_NUM_USER_BLOCK = 1;
+ // "mod_rst_done" are tied to 0
+ assign mod_rst_done[15:C_NUM_USER_BLOCK] = {(16-C_NUM_USER_BLOCK){1'b1}};
+ 
+-p2p_250mhz #(
++p2p_calc_p4_250mhz #(
+   .NUM_INTF (NUM_PHYS_FUNC)
+ ) p2p_250mhz_inst (
+   .s_axil_awvalid                   (axil_p2p_awvalid),
+diff --git a/src/box_250mhz/box_250mhz.sv b/src/box_250mhz/box_250mhz.sv
+index 913e86c..aabef5a 100644
+--- a/src/box_250mhz/box_250mhz.sv
++++ b/src/box_250mhz/box_250mhz.sv
+@@ -15,6 +15,7 @@
+ // limitations under the License.
+ //
+ // *************************************************************************
++`include "open_nic_shell_macros.vh"
+ `timescale 1ns/1ps
+ module box_250mhz #(
+   parameter int MIN_PKT_LEN   = 64,
+@@ -100,6 +101,7 @@ module box_250mhz #(
+ 
+   `include "box_250mhz_address_map_inst.vh"
+ 
++   
+   generate if (USE_PHYS_FUNC == 0) begin
+     // Terminate H2C and C2H interfaces of the box
+     assign s_axis_qdma_h2c_tready     = {NUM_PHYS_FUNC{1'b1}};
+@@ -114,6 +116,9 @@ module box_250mhz #(
+   end
+   endgenerate
+ 
+-  `include "user_plugin_250mhz_inst.vh"
++
++  `include "user_plugin_250mhz_inst.vh"    // user_plugin_250mhz was separately modified to 
++                                           // instantiate a new calc_p4 version
++
+ 
+ endmodule: box_250mhz
