@@ -1,0 +1,3 @@
+[submodule "P4Framework"]
+	path = P4Framework
+	url = git@github.com:OCT-FPGA/P4Framework.git
