@@ -17,8 +17,8 @@ These instructions assume you are in the directory P4/P4OpenNIC-Examples/
 
 There are multiple examples in this folder. The `$(APP)` in the below instructions should be replaced by any name in the following list.
 - forwarder
-- calculator
-- link\_monitor
+- calc
+- adv\_calc
 
 ## Build bitstreams and driver
 
@@ -29,7 +29,7 @@ Run `make` to build the hardware bitstream and corresponding software driver.
 The build will take up to about 12 hours on NERC. After the build is done, the memory configuration file is `$(APP)/$(APP).mcs` folder and the driver for configuring the tables is `$(APP).drivers/install/driver`.  
 
 -------------------------------------------------------------
-## DEPLOYMENT.  
+## DEPLOYMENT on OCT.  
 
 ## Pack
 After build finishes, if you need to deploy it on another machine, run `make pack` to pack up the necessary files.
@@ -37,9 +37,8 @@ After build finishes, if you need to deploy it on another machine, run `make pac
 Copy $(APP).tar.gz to your deployment machine. It will contain a mcs file as bitstream for configuring FPGA, an `install` folder as driver for loading tables, `util` folder with useful scripts and tools and other files for testing.
 
 ## Config the FPGA and host
-### (For user who use their own machine)
 
-Step 0: Vivado must be installed.  You do not need any licenses. Use Vivado version 2021.2.
+Step 0: Vivado or Vivado\_Lab must be installed.  You do not need any license for Vivado\_Lab.
 
 Before you flash the shell, you should disable PCIe fatal error reporting by running a script. This is done in order to avoid kernel panic, and a subsequent server reboot caused by the iDRAC. Download the script [here](https://alexforencich.com/wiki/en/pcie/disable-fatal). To disable PCIe error reporting, you should run
 
@@ -47,7 +46,13 @@ Before you flash the shell, you should disable PCIe fatal error reporting by run
 
 Step 1: Set up the enviorments for Vivado by: `source /tools/Xilinx/Vitis/2021.2/settings64.sh` 
 
-Step 2: User can choose to use the `util/program_config_mem.tcl` tcl file to program their FPGA by running:
+Step 2: 
+User can use either JTAG programming or PCIe programming.
+
+For PCIe programming (on OCT nodes): we utilize Xilinx xbflash2 tool to program the FPGA. 
+`sudo xbflash2 program --spi --image <path to the mcs> -d 3b:00.0 --bar 2`
+
+For JTAG programming: User can choose to use the `util/program_config_mem.tcl` tcl file to program their FPGA by running:
 
 `vivado -mode batch -source <path to the tcl/program_config_mem.tcl> -tclargs <path to the mcs>`.
 
@@ -72,14 +77,17 @@ Step 5: Run `sudo ifconfig enp59s0 192.168.1.10 netmask 255.255.255.0 up` to con
 
 For testing you need two servers, one with the FPGA attached that you just programmed.  We refer to this one as server1.  The second server, which sends packets to server1, we refer to as server2.  
 
-Once server1 is rebooted, set up a program to capture incoming packets on server1.  You can use wireshark or tcpdump.  For example,  `sudo tcpdump -i <ethernet-interface-name>` 
+Once server1 is rebooted, set up a program to capture incoming packets on server1.  You can use wireshark or tcpdump.  For example,  `sudo tcpdump -i <ethernet-interface-name>`.
+
 
 Use server2 to send packets to server1. You can use the command `tcpreplay` to send the provided pcap file frem server2 in `pcap/test1.pcap`: 
 
- `sudo tcpreplay --intf1=enp216s0 pcap/test1.pcap`
- 
- More information about the tests can be found in the pcap folder readme.  
+OCT FPGA nodes are equipped with a dual-port 40G Intel NIC. You can either use them to send the packets or setup the FPGA to send packets. 
 
+To bring the Intel NIC up, you can run `sudo ifconfig enp134s0f0 192.168.1.20 netmask 255.255.255.0 up`. 
+
+ `sudo tcpreplay --intf1=enp134s0f0 pcap/test1.pcap`
+ 
 
 ## Configuring P4 tables and parameters
 
