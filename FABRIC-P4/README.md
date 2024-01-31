@@ -11,7 +11,7 @@
   `sudo ./xsetup --agree 3rdPartyEULA,XilinxEULA --batch Install --edition "Vivado Lab Edition (Standalone)" --location /tools/Xilinx`
 
 * Install necessary libs:
-  `sudo yum install lsb` 
+  `sudo apt install lsb` 
 
   `sudo ./installLibs.sh`
 
