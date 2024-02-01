@@ -42,11 +42,11 @@
 
 * Run the following command to program the mcs file.
 
-    `EXTENDED_DEVICE_BDF1=0000:${bdf} ./program_flash.sh ../bitfiles/open_nic_shell.mcs au280 ${jtag_id}`
+    `EXTENDED_DEVICE_BDF1=0000:${bdf} ./program_flash.sh mcs_file_name au280 ${jtag_id}`
 
     For example, if the `bdf` is `3b:00.0` and the `jtag_id` is `21770297401DA`, the command is: 
 
-    `EXTENDED_DEVICE_BDF1=0000:3b:00.0 ./program_flash.sh ../bitfiles/open_nic_shell.mcs au280 21770297401DA`
+    `EXTENDED_DEVICE_BDF1=0000:3b:00.0 ./program_flash.sh open_nic_shell.mcs au280 21770297401DA`
 
 
 
