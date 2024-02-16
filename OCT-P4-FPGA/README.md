@@ -1,68 +1,32 @@
 # P4 Examples on OCT
 # BUILD
-## Prerequisite
-- Before your build below,  be sure to follow the prerequisite instructions in the P4 folder.  In particular:
-- 
-- set the variable `VIVADO_ROOT` to  point to the installation path for your Vivado. For example:
-
-`export VIVADO_ROOT=/tools/Xilinx/Vivado/2021.2`
-
-- Make sure you have the license for the VITISNETP4. This can be checked by running `vlm` or the command `$VIVADO_ROOT/bin/unwrapped/lnx64.o/lmutil lmdiag`.  
-
-- you should have cloned this directory into P4 on your local instance.  
-
-These instructions assume you are in the directory P4/P4OpenNIC-Examples/
-
-## APP List
-
-There are multiple examples in this folder. The `$(APP)` in the below instructions should be replaced by any name in the following list.
-- forwarder
-- calc
-- adv\_calc
-
-## Build bitstreams and driver
-
-Use `cd Example.$(APP)`  cd to the example folder. The P4 logic for the example is located in `src/p4/$(APP).p4`.
-
-Run `make` to build the hardware bitstream and corresponding software driver.
-
-The build will take up to about 12 hours on NERC. After the build is done, the memory configuration file is `$(APP)/$(APP).mcs` folder and the driver for configuring the tables is `$(APP).drivers/install/driver`.  
+For build, refer to instructions under P4Framework
 
 -------------------------------------------------------------
 ## DEPLOYMENT on OCT.  
 
-## Pack
-After build finishes, if you need to deploy it on another machine, run `make pack` to pack up the necessary files.
+## Request P4-nodes from Cloudlab
+Request nodes from Cloudlab. For the P4Framework examples, you will need to request at least two nodes. One is used to deploy P4 apps. The other is to send the packets. Note: The second node is not necessarily an FPGA node. However, only FPGA node in OCT provides 100G link.
 
-Copy $(APP).tar.gz to your deployment machine. It will contain a mcs file as bitstream for configuring FPGA, an `install` folder as driver for loading tables, `util` folder with useful scripts and tools and other files for testing.
+## Copy necessary files to the deployment machines
+Copy the `$(APP).dist to the FPGA node for the deployment. Copy the test pcap files to the other node. We will send these pcap packets to the P4-FPGA node.
+
 
 ## Config the FPGA and host
 
-Step 0: Vivado or Vivado\_Lab must be installed.  You do not need any license for Vivado\_Lab.
-
-Before you flash the shell, you should disable PCIe fatal error reporting by running a script. This is done in order to avoid kernel panic, and a subsequent server reboot caused by the iDRAC. Download the script [here](https://alexforencich.com/wiki/en/pcie/disable-fatal). To disable PCIe error reporting, you should run
-
-`sudo ./pcie_disable_fatal.sh 0000:3b:00.0`
-
-Step 1: Set up the enviorments for Vivado by: `source /tools/Xilinx/Vitis/2021.2/settings64.sh` 
-
-Step 2: 
-User can use either JTAG programming or PCIe programming.
+Step 1: 
+User can use either JTAG programming or PCIe programming. On OCT, we use PCIe programming for security issues.
 
 For PCIe programming (on OCT nodes): we utilize Xilinx xbflash2 tool to program the FPGA. 
 `sudo xbflash2 program --spi --image <path to the mcs> -d 3b:00.0 --bar 2`
 
-For JTAG programming: User can choose to use the `util/program_config_mem.tcl` tcl file to program their FPGA by running:
-
-`vivado -mode batch -source <path to the tcl/program_config_mem.tcl> -tclargs <path to the mcs>`.
-
-If the tcl script is not working properly on your own machine, you can use Vivado GUI for configuring the FPGA.
-
-Step 3: Reboot the host machine to install the bitstream.
+Step 2: Cold reboot the host machine to install the bitstream. To do so on OCT, you need to go to the cloudlab homepage to execute power cycle.
 
 Next,  you need to build the OpenNIC kernel module and load it.
 
 Step 1: Clone the OpenNIC driver onto your machine: `git clone https://github.com/Xilinx/open-nic-driver`.
+
+Step 1.5: Run `cd open-nic-driver` and `git checkout 2fa96685` (This is for Ubuntu 16.04. Remove it in the future)
 
 Step 2: Run `make` in the open-nic-driver directory to compile the kernel `onic.ko`.
 
