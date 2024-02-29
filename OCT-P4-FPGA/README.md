@@ -36,6 +36,17 @@ Step 4: Run `dmesg` to verify the kernel module has been inserted.
 
 Step 5: Run `sudo ifconfig enp59s0 192.168.1.10 netmask 255.255.255.0 up` to configure the network interface. You may wish to replace some parameters in the command to suit your own case. 
 
+## (Option) Config DPDK-pktgen
+
+This is for faster packet throughput. 
+
+Step 1: run `./dpdk.sh`
+
+Step 2: Refer to [Section 5](https://github.com/Xilinx/open-nic-dpdk) to configure the BIOS of the host. 
+
+Step 3: Refer to [Section 8](https://github.com/Xilinx/open-nic-dpdk) to run pktgen. 
+
+
 # Runtime 
 ## Testing
 
