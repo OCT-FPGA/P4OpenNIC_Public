@@ -1,5 +1,9 @@
 # Program FPGA Instructions
 
+
+## FABRIC-Example:
+FABRIC provides an example document in flashing our bitstream onto their FPGA [(link)](https://github.com/fabric-testbed/jupyter-examples/blob/main/fabric_examples/acceptance_testing/Acceptance%20Tests%206.1.3/fpga_flash_neu.ipynb).
+
 ##  Install the Vivado_Lab tools (For FABRIC Nodes)
 * Downlaod `Vivado 2023.1: Lab Edition - Linux` from AMD [webstie](https://www.xilinx.com/support/download.html) under `Vivado Lab Solutions - 2023.1` section. 
 * Extract the download file:
@@ -54,7 +58,7 @@ For example, as the manual indicates, the timestamp of the bitstream is located 
 
     `sudo ./pcimem $pciBARAddr/resources2 0x0" 
 
-
+For example, on FABRIC the BAR file is usually located at `/sys/bus/pci/devices/0000:1f:00.0/resources2`, you can run `sudo ./pcimem /sys/bus/pci/devices/0000:1f:00.0/resources2 0x0`.
 
 
 
