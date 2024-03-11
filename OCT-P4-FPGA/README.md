@@ -46,6 +46,14 @@ Step 2: Refer to [Section 5](https://github.com/Xilinx/open-nic-dpdk) to configu
 
 Step 3: Refer to [Section 8](https://github.com/Xilinx/open-nic-dpdk) to run pktgen. 
 
+## Checking the status of the bitstream.
+
+As the P4Framework is based on [OpenNIC shell](https://github.com/Xilinx/open-nic), it provides a few registers that can be accessed through the PCIe Base Address Register (BAR). The detailed layout can be found in the opennic shell [manual](https://github.com/Xilinx/open-nic/blob/main/OpenNIC_manual.pdf). 
+For example, as the manual indicates, the timestamp of the bitstream is located at 0x0000. Then you can use the [pcimem](https://github.com/billfarrow/pcimem) to access such address from the host machine. It will reflect the timestamp of the current loaded opennic shell design. In P4Framework, we auto-generate the timestamp based on the real time. The command of accessing such timestamp is:
+    `sudo ./pcimem $pciBARAddr/resources2 0x0" 
+
+
+
 
 # Runtime 
 ## Testing
