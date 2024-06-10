@@ -9,48 +9,114 @@ For build, refer to instructions under P4Framework
 Request nodes from Cloudlab. For the P4Framework examples, you will need to request at least two nodes. One is used to deploy P4 apps. The other is to send the packets. Note: The second node is not necessarily an FPGA node. However, only FPGA node in OCT provides 100G link.
 
 ## Copy necessary files to the deployment machines
-Copy the `$(APP).dist to the FPGA node for the deployment. Copy the test pcap files to the other node. We will send these pcap packets to the P4-FPGA node.
+Copy the `$(APP).dist` to the FPGA node for the deployment. Copy the test pcap files to the other node. We will send these pcap packets to the P4-FPGA node.
 
 
 ## Config the FPGA and host
+### Load your bitstream
+1. Make sure that your FPGA is in factory mode (golden image). 
+    ```
+    source /opt/xilinx/xrt/setup.sh
+    xbmgmt examine
+    ```
+    It should show something like with the golden image `xilinx_u280_GOLDEN_8`: 
+    ```
+    Devices present
+    BDF             :  Shell                 Platform UUID  Device ID  Device Ready*
+    ----------------------------------------------------------------------------------
+    [0000:3b:00.0]  :  xilinx_u280_GOLDEN_8  n/a            n/a        No
+    ```
+    
+    If not, use the `config-fpga reset yourkey.txt` to reset the FPGA to golden image. It may take a few minutes to finish. After finish, it will show something like: 
+    ```
+    ➜  zhhan@pc164 ~ config-fpga reset key.txt
+    Trying to reset the FPGA...
+    Successfully flashed the FPGA with golden image.
+    Trying to reset the PCIe bus...
+    PCIe device 3a:00.0 has been reset.
+    ```
+    Use the `xbmgmt examine` to double check again. 
+    
+1. User can use either JTAG programming or PCIe programming. On OCT, we use PCIe programming for security issues.
 
-Step 1: 
-User can use either JTAG programming or PCIe programming. On OCT, we use PCIe programming for security issues.
+    For PCIe programming (on OCT nodes): we utilize Xilinx xbflash2 tool to program the FPGA. 
+    `sudo xbflash2 program --spi --image <path to the mcs> -d 3b:00.0 --bar 2`
+    
+    The output is like: 
+    ```
+    ➜  zhhan@pc164 ~ sudo xbflash2 program --spi --image bits/opennic_0x02150250.mcs -d 3b:00.0 --bar 2
+    Preparing to program flash on device: 3b:00.0
+    Are you sure you wish to proceed? [Y/n]: Y
+    Successfully opened /dev/xfpga/flash.m15104.0
+    flashing via QSPI driver
+    Bitstream guard installed on flash @0x1002000
+    Extracting bitstream from MCS data:
+    .......................................
+    Extracted 40523332 bytes from bitstream @0x1002000
+    Writing bitstream to flash 0:
+    .......................................
+    Bitstream guard removed from flash
+    ****************************************************
+    Cold reboot machine to load the new image on device.
+    ****************************************************
+    ```
 
-For PCIe programming (on OCT nodes): we utilize Xilinx xbflash2 tool to program the FPGA. 
-`sudo xbflash2 program --spi --image <path to the mcs> -d 3b:00.0 --bar 2`
+1. Instead of cold reboot, we can warm reboot the host machine to install the bitstream. Run 
+    
+    `config-fpga boot yourkey.txt`
+    
+    It should show:
+    ```
+    ➜  zhhan@pc164 ~ config-fpga boot key.txt
+    Trying to boot the FPGA...
+    Successfully pulled the FPGA configuration from flash.
+    Trying to reset the PCIe bus...
+    PCIe device 3a:00.0 has been reset.
+    ```
+    
 
-Step 2: Cold reboot the host machine to install the bitstream. To do so on OCT, you need to go to the cloudlab homepage to execute power cycle.
-
+### Configure hardware drivers
 Next,  you need to build the OpenNIC kernel module and load it.
 
-Step 1: Clone the OpenNIC driver onto your machine: `git clone https://github.com/Xilinx/open-nic-driver`.
+1. Copy the opennic-scripts folder to your local directory:
 
-Step 1.5: Run `cd open-nic-driver` and `git checkout 2fa96685` (This is for Ubuntu 16.04. Remove it in the future)
+    ```
+    cp -r /proj/oct-fpga-p4-PG0/tools/deployment/opennic/opennic-scripts/ ~/.
+    cd opennic-scripts/open-nic-driver/
+    ```
+1. Run `sudo make` in the open-nic-driver directory to compile the kernel `onic.ko`.
 
-Step 2: Run `make` in the open-nic-driver directory to compile the kernel `onic.ko`.
+1. Run `sudo insmod onic.ko RS_FEC_ENABLED=0` to insert the module.
 
-Step 3: Run `sudo insmod onic.ko RS_FEC_ENABLED=0` to insert the module.
+1. Run `dmesg` to verify the kernel module has been inserted.
 
-Step 4: Run `dmesg` to verify the kernel module has been inserted.
+1. Run `sudo ifconfig ens1f1 192.168.40.20 netmask 255.255.255.0 up` to configure the network interface. You may wish to replace some parameters in the command to suit your own case. 
 
-Step 5: Run `sudo ifconfig enp59s0 192.168.1.10 netmask 255.255.255.0 up` to configure the network interface. You may wish to replace some parameters in the command to suit your own case. 
+1. (Optional) An extra 40G Intel NIC is provided as `ens7f0`. You may need to disable this NIC for FPGA-to-FPGA test.
 
 ## (Optional) Config DPDK-pktgen
 
 This is for faster packet throughput. 
 
-Step 1: run `./dpdk.sh`
+1. The DPDK is installed in the directory `/opt/dpdk`
 
-Step 2: Refer to [Section 5](https://github.com/Xilinx/open-nic-dpdk) to configure the BIOS of the host. 
+1. Refer to [Section 5](https://github.com/Xilinx/open-nic-dpdk) to configure the BIOS of the host. 
 
-Step 3: Refer to [Section 8](https://github.com/Xilinx/open-nic-dpdk) to run pktgen. 
+1. Refer to [Section 8](https://github.com/Xilinx/open-nic-dpdk) to run pktgen. 
 
 ## Checking the status of the bitstream.
 
-As the P4Framework is based on [OpenNIC shell](https://github.com/Xilinx/open-nic), it provides a few registers that can be accessed through the PCIe Base Address Register (BAR). The detailed layout can be found in the opennic shell [manual](https://github.com/Xilinx/open-nic/blob/main/OpenNIC_manual.pdf). 
+As the P4Framework is based on [OpenNIC shell](https://github.com/Xilinx/open-nic), it provides a few registers that can be accessed through the PCIe Base Address Register (BAR). 
+
+The detailed layout can be found in the opennic shell [manual](https://github.com/Xilinx/open-nic/blob/main/OpenNIC_manual.pdf). 
+
 For example, as the manual indicates, the timestamp of the bitstream is located at 0x0000. Then you can use the [pcimem](https://github.com/billfarrow/pcimem) to access such address from the host machine. It will reflect the timestamp of the current loaded opennic shell design. In P4Framework, we auto-generate the timestamp based on the real time. The command of accessing such timestamp is:
-    `sudo ./pcimem $pciBARAddr/resources2 0x0" 
+
+```
+sudo ./pcimem $pciBARAddr/resources2 0x0" 
+``` 
+
+The pcimem is located at `opennic-scripts/pcimem`.
 
 
 
@@ -67,9 +133,16 @@ Use server2 to send packets to server1. You can use the command `tcpreplay` to s
 
 OCT FPGA nodes are equipped with a dual-port 40G Intel NIC. You can either use them to send the packets or setup the FPGA to send packets. 
 
-To bring the Intel NIC up, you can run `sudo ifconfig enp134s0f0 192.168.1.20 netmask 255.255.255.0 up`. 
+To bring the Intel NIC up, you can run 
+```
+sudo ifconfig enp134s0f0 192.168.1.20 netmask 255.255.255.0 up
+```
 
- `sudo tcpreplay --intf1=enp134s0f0 pcap/test1.pcap`
+Run Tcpreplay to replay the trace on the network
+
+```
+sudo tcpreplay --intf1=enp134s0f0 pcap/test1.pcap
+```
  
 
 ## Configuring P4 tables and parameters
