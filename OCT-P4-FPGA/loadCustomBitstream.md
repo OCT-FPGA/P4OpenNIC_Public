@@ -62,7 +62,7 @@
     Cold reboot machine to load the new image on device.
     ****************************************************
     ```
-1. Instead of cold reboot, we can warm reboot the host machine to install the bitstream. Run 
+1. Instead of cold reboot, we can boot the FPGA from configuration memory to install the bitstream. Run 
    ```
    config-fpga boot private_key.pem
    ```
