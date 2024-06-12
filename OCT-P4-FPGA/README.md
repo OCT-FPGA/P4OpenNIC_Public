@@ -41,7 +41,7 @@ Copy the `$(APP).dist` to the FPGA node for the deployment. Copy the test pcap f
 
     For PCIe programming (on OCT nodes): we utilize Xilinx xbflash2 tool to program the FPGA. 
     `sudo xbflash2 program --spi --image <path to the mcs> -d 3b:00.0 --bar 2`
-    
+
     The output is like: 
     ```
     ➜  zhhan@pc164 ~ sudo xbflash2 program --spi --image bits/opennic_0x02150250.mcs -d 3b:00.0 --bar 2
@@ -61,19 +61,18 @@ Copy the `$(APP).dist` to the FPGA node for the deployment. Copy the test pcap f
     ****************************************************
     ```
 
-1. Instead of cold reboot, we can warm reboot the host machine to install the bitstream. Run 
-    
-    `config-fpga boot yourkey.txt`
-    
-    It should show:
-    ```
-    ➜  zhhan@pc164 ~ config-fpga boot key.txt
-    Trying to boot the FPGA...
-    Successfully pulled the FPGA configuration from flash.
-    Trying to reset the PCIe bus...
-    PCIe device 3a:00.0 has been reset.
-    ```
-    
+1. Instead of cold reboot, we can boot the FPGA from configuration memory to install the bitstream. Run 
+   ```
+   config-fpga boot private_key.pem
+   ```
+   It should show:
+   ```
+   zhhan@pc164 ~ config-fpga boot private_key.pem
+   Trying to boot the FPGA...
+   Successfully pulled the FPGA configuration from flash.
+   Trying to reset the PCIe bus...
+   PCIe device 3a:00.0 has been reset.
+   ```
 
 ### Configure hardware drivers
 Next,  you need to build the OpenNIC kernel module and load it.
@@ -124,7 +123,7 @@ The pcimem is located at `opennic-scripts/pcimem`.
 # Runtime 
 ## Testing
 
-For testing you need two servers, one with the FPGA attached that you just programmed.  We refer to this one as server1.  The second server, which sends packets to server1, we refer to as server2.  
+For testing you need two servers, one with the FPGA attached that you just programmed.  We refer to this one as server1.  The second server, which sends packets to server1, we refer to as server2.
 
 Once server1 is rebooted, set up a program to capture incoming packets on server1.  You can use wireshark or tcpdump.  For example,  `sudo tcpdump -i <ethernet-interface-name>`.
 
@@ -159,4 +158,4 @@ After modifications, run `make clean && make` in the `install` folder to rebuild
 
 Run `sudo ./driver` to load the tables to the P4 logic on FPGA.
 
-Note: The C file in the `install` folder may be overwritten if you rebuild the bitstream.  Save any changes before rebuilding the bitstream.  
+Note: The C file in the `install` folder may be overwritten if you rebuild the bitstream.  Save any changes before rebuilding the bitstream.

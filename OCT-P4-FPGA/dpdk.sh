@@ -28,9 +28,8 @@ cp -R ../dma_ip_drivers/QDMA/DPDK/examples/qdma_testapp ./examples
 # add qdma to the drivers/net/meson.build
 sed -i "47i 'qdma'," drivers/net/meson.build
 cd ..
-wget \
-https://git.dpdk.org/apps/pktgen-dpdk/snapshot/pktgen-dpdk-pktgen-20.11.3.tar.xz
-tar xvf pktgen-dpdk-pktgen-20.11.3.tar.xz
+wget https://git.dpdk.org/apps/pktgen-dpdk/snapshot/pktgen-dpdk-pktgen-21.03.1.tar.xz
+tar xvf pktgen-dpdk-pktgen-21.03.1.tar.xz
 cd dpdk-20.11
 meson build
 cd build
@@ -40,9 +39,11 @@ ls -l /usr/local/lib/x86_64-linux-gnu/librte_net_qdma.so
 sudo ldconfig
 ls -l ./app/test/dpdk-test
 cd ../..
-cd pktgen-dpdk-pktgen-20.11.3
+pwd
+cd pktgen-dpdk-pktgen-21.03.1
 make RTE_SDK=../dpdk-20.11 RTE_TARGET=build
 cd ../dpdk-20.11/usertools
 sed -i '62s/\[network_class, cavium_pkx, avp_vnic, ifpga_class\]/\[network_class, cavium_pkx, avp_vnic, ifpga_class, qdma\]/' dpdk-devbind.py
 sed -i "38i qdma = {'Class': '02', 'Vendor': '10ee', 'Device': '903f,913f'," dpdk-devbind.py
 sed -i "39i                'SVendor': None, 'SDevice': None}" dpdk-devbind.py
+cp dpdk-devbind.py /usr/local/bin/.
