@@ -27,9 +27,21 @@ Copy the `$(APP).dist` to the FPGA node for the deployment. Copy the test pcap f
     [0000:3b:00.0]  :  xilinx_u280_GOLDEN_8  n/a            n/a        No
     ```
     
-    If not, use the `config-fpga reset yourkey.txt` to reset the FPGA to golden image. It may take a few minutes to finish. After finish, it will show something like: 
+    If not, use the `config-fpga reset private_key.pem` to reset the FPGA to golden image.
+
+    The `private_key.pem` file is the private key used to access the head node that performs the reset. You can generate the public-private key pair by running the following commands:
+
     ```
-    ➜  zhhan@pc164 ~ config-fpga reset key.txt
+    openssl genpkey -algorithm RSA -out private_key.pem -pkeyopt rsa_keygen_bits:2048
+    ```
+    ```
+    openssl rsa -pubout -in private_key.pem -out public_key.pem
+    ``` 
+    After generating the keypair, share your public key with us. This will allow you to use your private key to run `config-fpga`.
+
+   It may take a few minutes to finish. After finish, it will show something like: 
+    ```
+    ➜  zhhan@pc164 ~ config-fpga reset private_key.pem
     Trying to reset the FPGA...
     Successfully flashed the FPGA with golden image.
     Trying to reset the PCIe bus...
