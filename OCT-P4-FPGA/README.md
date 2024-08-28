@@ -37,7 +37,7 @@ Copy the `$(APP).dist` to the FPGA node for the deployment. Copy the test pcap f
     ```
     openssl rsa -pubout -in private_key.pem -out public_key.pem
     ``` 
-    After generating the keypair, share your public key with us. This will allow you to use your private key to run `config-fpga`.
+    After generating the keypair, share your public key with us (email your public key to s.handagala@northeastern.edu). This will allow you to use your private key to run `config-fpga`.
 
    It may take a few minutes to finish. After finish, it will show something like: 
     ```
