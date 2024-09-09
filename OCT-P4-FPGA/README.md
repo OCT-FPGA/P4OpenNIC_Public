@@ -116,7 +116,8 @@ This is for faster packet throughput.
 1. Refer to [Section 8](https://github.com/Xilinx/open-nic-dpdk) to run pktgen from `dpdk/pktgen-dpdk-pktgen-21.03.1/usr/local/bin/` 
 
 1. On OCT-FPGAs try run the following command to start the pktgen:
-``` sudo ./pktgen -a 3b:00.0 -a 3b:00.1 -d librte_net_qdma.so -l 4-10 -n 4 -a 3a:00.0 -a 3a:00.1 -- -m [6:7].0 -m [8:9].1 ```
+
+``` sudo ./pktgen --log-level 7 -a 3b:00.0 -d librte_net_qdma.so -l 0,2,4,6,8,10,12,14 -n 4 -- -P -T -m {2/4/6/8/10/12:14}.0 -l 1.log ```
 ## Checking the status of the bitstream.
 
 As the P4Framework is based on [OpenNIC shell](https://github.com/Xilinx/open-nic), it provides a few registers that can be accessed through the PCIe Base Address Register (BAR). 
