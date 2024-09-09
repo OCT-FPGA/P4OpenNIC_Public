@@ -113,7 +113,7 @@ This is for faster packet throughput.
 
 1. Refer to [Section 5](https://github.com/Xilinx/open-nic-dpdk) to configure the BIOS of the host. 
 
-1. Refer to [Section 8](https://github.com/Xilinx/open-nic-dpdk) to run pktgen. 
+1. Refer to [Section 8](https://github.com/Xilinx/open-nic-dpdk) to run pktgen from `dpdk/pktgen-dpdk-pktgen-21.03.1/usr/local/bin/` 
 
 ## Checking the status of the bitstream.
 
