@@ -6,7 +6,9 @@ There are four pieces of this repository:
 
 - **Running P4 on BMV2**   For running P4 examples on the NERC on BMV2 with NO FPGA hardware: `OCT-P4-BMV2`.  These use the standard P4 tutorials  (https://github.com/p4lang/tutorials)  and follow the P4 model (bmv2). 
 
-- **Building P4 on FPGA**  You can use `P4Framework` to build your FPGA bitstream and run on the AMD FPGAs. This is the core of this project. It provides a skeleton for building an FPGA-based NIC that instantiates a P4 function on the OpenNIC shell. It also provides three examples where you can directly try to build and depoly on our testbed. It can also be tested on the FABRIC cloud FPGAs [link](https://learn.fabric-testbed.net/article-categories/programmable-networking/). 
+- **Building P4 on FPGA**  You can use `P4Framework` to build your FPGA bitstream and run on the AMD FPGAs. This is the core of this project. It provides a skeleton for building an FPGA-based NIC that instantiates a P4 function on the OpenNIC shell. It also provides three examples where you can directly try to build and depoly on our testbed. It can also be tested on the FABRIC cloud FPGAs [link](https://learn.fabric-testbed.net/article-categories/programmable-networking/).
+
+NOTE: If you are using Cloudlab build machines instead of NERC VMs, please follow the initialization steps in [here]() 
 
 - **Running P4 on FPGA**   There are two instrcutions available for testing after you generating the bitstream through our `P4Framework`. To test it on the OCT FPGAs, refer to `OCT-P4-FPGA`. To test it on FABRIC FPGAs, refer to `FABRIC-P4-FPGA`.
 
