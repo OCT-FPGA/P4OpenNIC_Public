@@ -8,8 +8,6 @@ There are four pieces of this repository:
 
 - **Building P4 on FPGA**  You can use `P4Framework` to build your FPGA bitstream and run on the AMD FPGAs. This is the core of this project. It provides a skeleton for building an FPGA-based NIC that instantiates a P4 function on the OpenNIC shell. It also provides three examples where you can directly try to build and depoly on our testbed. It can also be tested on the FABRIC cloud FPGAs [link](https://learn.fabric-testbed.net/article-categories/programmable-networking/).
 
-NOTE: If you are using Cloudlab build machines instead of NERC VMs, please follow the initialization steps in [here]() 
-
 - **Running P4 on FPGA**   There are two instrcutions available for testing after you generating the bitstream through our `P4Framework`. To test it on the OCT FPGAs, refer to `OCT-P4-FPGA`. To test it on FABRIC FPGAs, refer to `FABRIC-P4-FPGA`.
 
 - **The Xiinx OpenNIC framework**  If you are not familiar with working with FPGAs and generating and downloading bitstreams, follow the instructions for deploying and testing Xilinx's OpenNIC `OpenNIC-Getting-Started`.  IMPORTANT:  These instructions are for deploying OpenNIC on FPGAs at Northeastern's Reconfigurable Computing Laboratory.  You will need your own FPGA hardware to run through this tutorial.  `OpenNIC-Getting-Started`
