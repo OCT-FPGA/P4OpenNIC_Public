@@ -92,7 +92,7 @@ Next,  you need to build the OpenNIC kernel module and load it.
 1. Copy the opennic-scripts folder to your local directory:
 
     ```
-    cp -r /proj/octfpga-PG0/tools/deployment/opennic/opennic-scripts/ ~/.
+    cp -r /share/tools/u280/deployment/opennic/opennic-scripts/ ~/.
     cd opennic-scripts/open-nic-driver/
     ```
 1. Run `sudo make` in the open-nic-driver directory to compile the kernel `onic.ko`.
