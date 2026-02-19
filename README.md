@@ -16,17 +16,17 @@ There are four pieces of this repository:
 
 ## Prerequisite 
 
-If you are not familiar with NERC follow these directions to create an account and setup an instance from [here](https://docs.google.com/document/d/1_JZ1K0lDdCTKP6TePhMbEBIyySO4jYZbF9-yBIQO07A/edit).
+If you are not familiar with the build workflow, follow the directions [here](https://github.com/OCT-FPGA/OCT-Tutorials/blob/master/cloudlab-setup/build-machines.md) to set up a build machine.
 
-- Clone this repo by `git clone https://github.com/OCT-FPGA/P4OpenNIC_Public.git` on your NERC instance. 
+- Clone this repo by `git clone https://github.com/OCT-FPGA/P4OpenNIC_Public.git` on your build machine. 
 
 For FPGA bitstream build:
 
-- set the Xilinx Vivado installation path to 'VIVADO_ROOT'. On NERC:  `export VIVADO_ROOT=/tools/Xilinx/Vivado/2021.2`
+- set the Xilinx Vivado installation path to 'VIVADO_ROOT'. On NERC:  `export VIVADO_ROOT=/share/Xilinx/Vivado/2021.2`
 
 ## Prodcut licensing
 
-To build OpenNIC, CMAC license is required. For deploying P4 codes onto FPGAs, certain licenses for VitisNetP4 are also required. All those licenses have already been setup on NERC.
+To build OpenNIC, CMAC license is required. For deploying P4 codes onto FPGAs, certain licenses for VitisNetP4 are also required. All those licenses have already been setup.
 
 To set the license path on NERC: 
 
