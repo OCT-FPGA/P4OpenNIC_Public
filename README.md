@@ -30,4 +30,4 @@ To build OpenNIC, CMAC license is required. For deploying P4 codes onto FPGAs, c
 
 To set the license path on NERC: 
 
-`export XILINXD_LICENSE_FILE=2100@192.168.0.54`
+`export XILINXD_LICENSE_FILE=2100@xilinxlm`
