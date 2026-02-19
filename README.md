@@ -4,7 +4,7 @@ This repository is to build and run P4 codes with or without FPGA hardware. It b
 
 There are four pieces of this repository:
 
-- **Running P4 on BMV2**   For running P4 examples on the NERC on BMV2 with NO FPGA hardware: `OCT-P4-BMV2`.  These use the standard P4 tutorials  (https://github.com/p4lang/tutorials)  and follow the P4 model (bmv2). 
+- **Running P4 on BMV2**   For running P4 examples on the build machine on BMV2 with NO FPGA hardware: `OCT-P4-BMV2`.  These use the standard P4 tutorials  (https://github.com/p4lang/tutorials)  and follow the P4 model (bmv2). 
 
 - **Building P4 on FPGA**  You can use `P4Framework` to build your FPGA bitstream and run on the AMD FPGAs. This is the core of this project. It provides a skeleton for building an FPGA-based NIC that instantiates a P4 function on the OpenNIC shell. It also provides three examples where you can directly try to build and depoly on our testbed. It can also be tested on the FABRIC cloud FPGAs [link](https://learn.fabric-testbed.net/article-categories/programmable-networking/).
 
@@ -28,6 +28,6 @@ For FPGA bitstream build:
 
 To build OpenNIC, CMAC license is required. For deploying P4 codes onto FPGAs, certain licenses for VitisNetP4 are also required. All those licenses have already been setup.
 
-To set the license path on NERC: 
+To set the license path on the build machine: 
 
 `export XILINXD_LICENSE_FILE=2100@xilinxlm`
