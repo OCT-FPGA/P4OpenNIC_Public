@@ -22,7 +22,7 @@ If you are not familiar with the build workflow, follow the directions [here](ht
 
 For FPGA bitstream build:
 
-- set the Xilinx Vivado installation path to 'VIVADO_ROOT'. On NERC:  `export VIVADO_ROOT=/share/Xilinx/Vivado/2021.2`
+- set the Xilinx Vivado installation path to 'VIVADO_ROOT'. On the build machine:  `export VIVADO_ROOT=/share/Xilinx/Vivado/2021.2`
 
 ## Prodcut licensing
 
