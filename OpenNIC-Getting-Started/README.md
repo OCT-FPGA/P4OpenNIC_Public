@@ -29,9 +29,9 @@ Change the Vivado version to 2021.2 in `open-nic-shell/scripts/build.tcl`
 `set VIVADO_VERSION "2021.2"`
 
 ### Build the OpenNIC bitstream
-Before doing this, be sure to check out the CMAC license which is hosted on NERC. Bitstream generation will fail without this license.
+Before doing this, be sure to check out the CMAC license which is hosted on the OCT license server. Bitstream generation will fail without this license.
 
-`export XILINXD_LICENSE_FILE=2100@192.168.0.54`
+`export XILINXD_LICENSE_FILE=2100@octlm`
 
 Also, source the Vivado environment by running
 `source /tools/Xilinx/Vitis/2021.2/settings64.sh`
